@@ -7,11 +7,10 @@
  *
  */
 
-#import "RibbonPaint.h"
-#import "IKLine.h"
-#import "Segment.h"
-#import "cinder/gl/gl.h"
-#include "cinder/Display.h"
+#include "RibbonPaint.h"
+//#include "IKLine.h"
+//#include "Segment.h"
+
 
 #ifdef __RIBBON__PAINT__XCODE__
 #import "MyCinderGLDrawing.h"
@@ -27,15 +26,15 @@ void RibbonPaint::prepareSettings(Settings *settings) {
 	settings->setWindowSize(1200, 800);
 	settings->setFrameRate( 60 );
 	settings->setTitle("RibbonPaint");
-	settings->enableSecondaryDisplayBlanking(false);
+//	settings->enableSecondaryDisplayBlanking(false);
 	settings->setDisplay( ci::Display::getDisplays().at(1) );
 }
 
 void RibbonPaint::setup()
 {
-	srandom( time(NULL) );
+	//srandom( time(NULL) );
 
-	ci::Rand::randSeed( random() );
+	ci::Rand::randSeed( 2 );
 	_perlinNoise.setSeed( sin( time( NULL ) ) * 10);
 	_perlinNoise.setOctaves( 4 );
 
@@ -297,11 +296,11 @@ void RibbonPaint::saveOutBrushImageAndParameters()
 	std::string timeStamp = ss.str();
 
 	// Save the filename
-	std::string fileName = ci::getHomeDirectory() + "RibbonPaint/Brush_" + timeStamp;
+	//std::string fileName = getAssetPath("") / "RibbonPaint/Brush_";
 
 	// Lets write the file now
 	// Get an OStreamFileRef which is what you'll use to write to your file.
-	ci::OStreamFileRef oStream = ci::writeFileStream( fileName + ".txt", true );
+	//ci::OStreamFileRef oStream = ci::writeFileStream( fileName + ".txt", true );
 
 	// Create a string with the data you want to write.
 //	std::string myString = "Ribbon Paint(c) by Mario Gonzalez (onedayitwillmake.com) of Whale Island Games\n-\n";
@@ -348,24 +347,24 @@ void RibbonPaint::fileDrop( ci::app::FileDropEvent event )
 {
 	if(_state != kStateNormal) return;
 
-	if(event.getNumFiles() != 1) return;
+	//if(event.getNumFiles() != 1) return;
 
-	std::string fileRef = event.getFile(0);
+	//std::string fileRef = event.getFile(0);
 
-	ci::IStreamFileRef stream = ci::loadFileStream(fileRef);
+	//ci::IStreamFileRef stream = ci::loadFileStream(fileRef);
 
-	while (stream->isEof() == false)
-	{
-		std::string currentLine = stream->readLine();
-		std::string::size_type locationIndex = currentLine.find( "Parameters Used: [", 0 );
+	//while (stream->isEof() == false)
+	//{
+	//	std::string currentLine = stream->readLine();
+	//	std::string::size_type locationIndex = currentLine.find( "Parameters Used: [", 0 );
 
-		// Found a match lets set the parameters
-		if( locationIndex != std::string::npos )
-		{
-			setBrushSettingsFromStringParameters(currentLine);
-			return;
-		}
-	}
+	//	// Found a match lets set the parameters
+	//	if( locationIndex != std::string::npos )
+	//	{
+	//		setBrushSettingsFromStringParameters(currentLine);
+	//		return;
+	//	}
+	//}
 }
 
 #pragma mark Brush Creation
@@ -630,20 +629,21 @@ void RibbonPaint::drawIKLine( linePointer& lineToDraw ) {
 	}
 }
 
-inline void RibbonPaint::drawBezier(ci::Vec2f origin, ci::Vec2f control, ci::Vec2f destination, int segments) {
-	ci::Vec2f vertices[segments + 1];
-
+inline void RibbonPaint::drawBezier(ci::Vec2f origin, ci::Vec2f control, ci::Vec2f destination, const int segments) {
+	//ci::Vec2f vertices[segments + 1];
+	vector<ci::Vec2f> vertices;
 	float t = 0.0;
-	for(int i = 0; i <= segments; i++) {
+	for(int i = 0; i <= segments-1; i++) {
 		float x = pow(1.0f - t, 2) * origin.x + 2.0f * (1.0f - t) * t * control.x + t * t * destination.x;
 		float y = pow(1.0f - t, 2) * origin.y + 2.0f * (1.0f - t) * t * control.y + t * t * destination.y;
-		vertices[i] = ci::Vec2f(x, y);
+		vertices.push_back(ci::Vec2f(x, y));
+		//vertices[i] = ci::Vec2f(x, y);
 		t += 1.0f / segments;
 	}
 	vertices[segments] = destination;
 
-	glVertexPointer(2, GL_FLOAT, 0, vertices);
-	glDrawArrays(GL_LINE_STRIP, 0, segments + !_glitchSegment);
+	/*glVertexPointer(2, GL_FLOAT, 0, vertices);
+	glDrawArrays(GL_LINE_STRIP, 0, segments + !_glitchSegment);*/
 }
 
 #ifdef __RIBBON__PAINT__XCODE__

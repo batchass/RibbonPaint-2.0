@@ -15,7 +15,8 @@
 #include "cinder/Url.h"
 #include "cinder/Utilities.h"
 #include "cinder/Xml.h"
-
+#include "cinder/gl/gl.h"
+#include "cinder/Display.h"
 // app
 #include "IKLine.h"
 #include "Resources.h"

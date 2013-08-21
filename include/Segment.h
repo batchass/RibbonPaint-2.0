@@ -9,7 +9,7 @@
 
 #include "cinder/Vector.h"
 #include "cinder/Rand.h"
-
+using namespace ci;
 class Segment
 {
 public:

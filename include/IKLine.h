@@ -11,16 +11,16 @@
 #include "cinder/Rand.h"
 #include "cinder/Vector.h"
 #include "cinder/Perlin.h"
-//#include "cinder/app/AppBasic.h"
+#include "cinder/app/AppBasic.h"
 
 #include <list>
 #include <vector>
 
 #include "Segment.h"
 
-//using std::list;
-//using std::vector;
-//using namespace ci;
+using std::list;
+using std::vector;
+using namespace ci;
 
 class IKLine
 {

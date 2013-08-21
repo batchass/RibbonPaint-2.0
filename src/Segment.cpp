@@ -8,7 +8,7 @@
  */
 
 #include "Segment.h"
-using namespace ci;
+
 
 Segment::Segment(float length)
 {
