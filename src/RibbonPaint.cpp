@@ -138,7 +138,7 @@ void RibbonPaint::setup()
 void RibbonPaint::setupAfterSplash() {
 	_state = kStateNormal;
 	_additiveBlending = false;
-	_useBezier = true;
+	_useBezier = false;
 	randomizeBrush();
 }
 
