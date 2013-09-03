@@ -4,7 +4,7 @@
  *  Created on: Sep 30, 2011
  *      Author: mariogonzalez
  */
-
+#pragma once
 #ifndef COLORSTATEMANAGER_H_
 #define COLORSTATEMANAGER_H_
 #include "IColorMode.h"

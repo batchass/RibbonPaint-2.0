@@ -6,7 +6,7 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
-
+#pragma once
 
 #include "cinder/Rand.h"
 #include "cinder/Vector.h"

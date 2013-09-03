@@ -20,19 +20,82 @@
 #endif
 
 //#import "gl.h"
+void RibbonPaint::reymentaSetup()
+{
+	mBackgroundColor = ColorAf( 0.0f, 0.0f, 0.0f, 0.0f );
+	mDisplayCount = 0;
+	mRenderY = 0;
+	for (auto display : Display::getDisplays() )
+	{
+		mDisplayCount++;
+		std::cout << "Width:" << display->getWidth() << "\n"; 
+		std::cout << "Height:" << display->getHeight() << "\n"; 
+		mRenderWidth = display->getWidth();
+		mRenderHeight = display->getHeight();
 
-#pragma mark Setup
+		//mRenderX mRenderY mRenderWidth mRenderHeight
+	}
+	std::cout << "Display Count:" << mDisplayCount << "\n";
+	if ( mDisplayCount == 1 )
+	{
+		mRenderX = mMainDisplayWidth / 2;
+		mRenderWidth /= 2;
+		mRenderHeight /= 2;
+	}
+	else
+	{
+		mRenderX = mMainDisplayWidth;
+	}
+	/*setWindowSize( mRenderWidth, mRenderHeight );
+	
+	WindowRef rWin = app::getWindow();
+	rWin->setPos(mRenderX, mRenderY);
+	rWin->setBorderless();
+	rWin->setAlwaysOnTop();
+
+	HWND hWnd = (HWND)rWin->getNative();
+
+	HRESULT hr = S_OK;
+	// Create and populate the Blur Behind structure
+	DWM_BLURBEHIND bb = {0};
+
+	// Enable Blur Behind and apply to the entire client area
+	bb.dwFlags = DWM_BB_ENABLE;
+	bb.fEnable = true;
+	bb.hRgnBlur = NULL;
+
+	// Apply Blur Behind
+	hr = DwmEnableBlurBehindWindow(hWnd, &bb);
+	if (SUCCEEDED(hr))
+	{
+		HRESULT hr = S_OK;
+
+		// Set the margins, extending the bottom margin.
+		MARGINS margins = {-1};
+
+		// Extend the frame on the bottom of the client area.
+		hr = DwmExtendFrameIntoClientArea(hWnd,&margins);
+	}
+	
+	setWindowPos( mMainDisplayWidth, 0 );*/
+	//setFullScreen( ! isFullScreen() );
+	receiver.setup( 10001 );
+}
+void RibbonPaint::quitProgram()
+{
+	quit();
+}
+
 void RibbonPaint::prepareSettings(Settings *settings) {
 	settings->setWindowSize(1200, 800);
 	settings->setFrameRate( 60 );
 	settings->setTitle("RibbonPaint");
-//	settings->enableSecondaryDisplayBlanking(false);
-	settings->setDisplay( ci::Display::getDisplays().at(1) );
+	//settings->setDisplay( ci::Display::getDisplays().at(1) );
 }
 
 void RibbonPaint::setup()
 {
-	//srandom( time(NULL) );
+	reymentaSetup();
 
 	ci::Rand::randSeed( 2 );
 	_perlinNoise.setSeed( sin( time( NULL ) ) * 10);
@@ -40,8 +103,7 @@ void RibbonPaint::setup()
 
 
 	_alertTextDefaultDisplayTimeInFrames = 60 * 3;
-	_mousePosition = _getWindowCenter();
-	_versionFlasher = 0;
+	_mousePosition = getWindowCenter();
 	_gravity = 0.0;
 	_glitchSegment = false;
 	_drawPins = false;
@@ -52,10 +114,6 @@ void RibbonPaint::setup()
 
 	_colorStateManager.setInitialState( new ColorModes::ColorModeRGB() );
 
-	// state
-	_state = kStateIsShowingSplashScreen;
-	setupAfterSplash();
-
 	_colorMap['1'] = new ColorModes::ColorModeHSV();
 	_colorMap['2'] = new ColorModes::ColorModeRGB();
 	_colorMap['3'] = new ColorModes::ColorModeRGBInverse();
@@ -65,78 +123,6 @@ void RibbonPaint::setup()
 	_colorMap['7'] = new ColorModes::ColorModeAlphaBlend1();
 	_colorMap['8'] = new ColorModes::ColorModeAlphaBlend2();
 	_colorMap['9'] = new ColorModes::ColorModeAlphaBlend3();
-
-
-	// PARAMS
-	_drawParams = false;
-	//	_params = ci::params::InterfaceGl( "Settings", ci::Vec2i( 200, 250 ) );
-	//	_params.addParam("BristleCount", &_bristleCount, "min=1 max=100.0 step=1");
-	//	_params.addParam("BrushRadius", &_brushRadius, "min=0 max=25.0 step=0.5");
-	//	_params.addSeparator();
-	//	_params.addParam("FilamentSpacing", &_filamentSpacing, "min=1.0 max=20.0 step=0.5");
-	//	_params.addParam("FilamentCount", &_filamentCount, "min=5.0 max=100 step=5.0");
-	//	_params.addSeparator();
-	//	_params.addParam("FrictionMin", &_canvasFrictionMin, "min=0.2 max=0.9 step=0.01");
-	//	_params.addParam("FrictionMax", &_canvasFrictionMax, "min=0.2 max=0.96 step=0.01");
-	//	_params.addSeparator();
-	//	_params.addParam("Gravity", &_gravity, "min=0.0 max=2.0 step=0.1");
-	//	_params.addSeparator();
-	//	_params.addParam("ChaseSpeed", &_mouseChaseDamping, "", true);
-	//	_params.addParam("Alpha", &_alphaWhenDrawingFloat, "", true);
-
-#ifdef __COLORMODE__TEST
-	//	_params.addSeparator();
-	//	_params.addParam("__R_LEFT", &__R_LEFT, "min=0.0 max=360.0 step=1");
-	//	_params.addParam("__G_LEFT", &__G_LEFT, "min=0.0 max=1.0 step=0.01");
-	//	_params.addParam("__B_LEFT", &__B_LEFT, "min=0.0 max=1.0 step=0.01");
-	//	_params.addParam("__RGB_ALPHA", &__RGB_ALPHA, "min=0.0 max=1.0 step=0.001");
-	//	_params.addParam("__R_RIGHT", &__R_RIGHT, "min=0.0 max=360.0 step=0.01");
-	//	_params.addParam("__G_RIGHT", &__G_RIGHT, "min=0.0 max=1.0 step=0.01");
-	//	_params.addParam("__B_RIGHT", &__B_RIGHT, "min=0.0 max=1.0 step=0.01");
-	//
-	__R_LEFT = 0.4;
-	__G_LEFT = 0.4;
-	__B_LEFT = 0.4;
-	__RGB_ALPHA = 0.065;
-	__R_RIGHT = 0.5;
-	__G_RIGHT = 0.5;
-	__B_RIGHT = 0.5;
-#endif
-
-	//	_params.show( false );
-
-	//[[MyCinderGLDrawing instance] loadResource: SPLASH_SCREEN] )
-//	_splashScreen = ci::gl::Texture( loadImage( LOAD_RESOURCE( SPLASH_SCREEN )  ) );
-//	_instructionsBlack = ci::gl::Texture( loadImage(LOAD_RESOURCE( INSTRUCTIONS_BLACK ) ) );
-//	_instructionsWhite = ci::gl::Texture( loadImage(LOAD_RESOURCE( INSTRUCTIONS_WHITE ) ) );
-
-
-
-	// versioning
-	_latestVersion = 0.0f;
-	_versionNumber = 2.06f;
-	//
-	//	try {
-	//		ci::XmlDocument doc( loadUrlStream( "http://www.ribbonpaint.com/currentVersionNumber.xml" ) );
-	//		std::vector<XmlElement> items( doc.xpath( "/xml/info" ) );
-	//		for( std::vector<XmlElement>::iterator itemIter = items.begin(); itemIter != items.end(); ++itemIter )
-	//		{
-	//			std::string val = itemIter->findChild("version").value();
-	//			_latestVersion = boost::lexical_cast<float>( val );
-	//			ci::app::console() << val << std::endl;
-	//		}
-	//	}
-	//	catch (...)
-	//	{
-	//		ci::app::console() << "some error in xml parsing" << std::endl;
-	//	}
-	//
-
-//	glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
-}
-
-void RibbonPaint::setupAfterSplash() {
-	_state = kStateNormal;
 	_additiveBlending = false;
 	_useBezier = false;
 	randomizeBrush();
@@ -145,7 +131,6 @@ void RibbonPaint::setupAfterSplash() {
 #pragma mark Events
 
 void RibbonPaint::mouseDown( ci::Vec2f position ){
-	if(_state != kStateNormal) return;
 
 	_oldAlphaWhenDrawing = _alphaWhenDrawing;
 	ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
@@ -153,25 +138,12 @@ void RibbonPaint::mouseDown( ci::Vec2f position ){
 
 void RibbonPaint::mouseDrag( ci::Vec2f position )
 {
-	if(_state != kStateNormal) return;
 
 	// Not drawing lines, clear the frame
 	if(_drawLines == false)
 		ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
 
-	// invisible if shift is helpd down
-	if(_getIsShiftDown())  {
-		// Store it the first time
-		if(_alphaWhenDrawing > 0) {
-			_oldAlphaWhenDrawing = _alphaWhenDrawing;
-		}
-
-		// make zero until they let go, or mouse up
-		_alphaWhenDrawing = 0;
-
-	} else {
-		_alphaWhenDrawing = _oldAlphaWhenDrawing;
-	}
+	_alphaWhenDrawing = _oldAlphaWhenDrawing;
 
 	// start drawing lines
 	_mousePosition = position;
@@ -180,8 +152,6 @@ void RibbonPaint::mouseDrag( ci::Vec2f position )
 
 void RibbonPaint::mouseMove( ci::Vec2f position )
 {
-	if(_state != kStateNormal) return;
-
 	_mousePosition = position;
 	//    std::cout << [[MyCinderGLDrawing instance] getWindowWidth] << std::endl;
 }
@@ -202,7 +172,6 @@ void RibbonPaint::keyUp( ci::app::KeyEvent event )
 
 void RibbonPaint::keyDown( ci::app::KeyEvent event )
 {
-	if(_state != kStateNormal) return;
 
 	std::map<char, ColorModes::IColorMode*>::iterator itr = _colorMap.find( event.getChar() );
 	if(itr != _colorMap.end() ) {
@@ -213,13 +182,6 @@ void RibbonPaint::keyDown( ci::app::KeyEvent event )
 	int colorMode;
 	switch (keyPressed)
 	{
-		case 's':
-			saveOutBrushImageAndParameters();
-			break;
-		case 'o':
-			_drawParams = !_drawParams;
-			//			_params.show( !_params.isVisible() );
-			break;
 		case 'r':
 			randomizeBrush();
 			break;
@@ -259,12 +221,10 @@ void RibbonPaint::keyDown( ci::app::KeyEvent event )
 			_mouseChaseDamping += 0.02;
 
 		_mouseChaseDamping = ci::math<float>::clamp(_mouseChaseDamping, 0.02, 1.0);
-		updateParams();
 	}
 
 	if(event.getCode() == ci::app::KeyEvent::KEY_UP || event.getCode() == ci::app::KeyEvent::KEY_DOWN) {
 		_alphaWhenDrawing = ci::math<double>::clamp(_alphaWhenDrawing + ((event.getCode() == ci::app::KeyEvent::KEY_UP) ? 0.005 : -0.005), 0.0, 1.0);
-		updateParams();
 	}
 
 	// exit fullscreen with escape, and toggle with F
@@ -274,15 +234,6 @@ void RibbonPaint::keyDown( ci::app::KeyEvent event )
 	}
 }
 
-void RibbonPaint::updateParams()
-{
-	//	if(_params.isVisible()) {
-	//		_params.show( false );
-	//		_params.show( true );
-	//	}
-}
-
-#pragma mark File Handling
 void RibbonPaint::saveOutBrushImageAndParameters()
 {
 	using namespace boost::posix_time;
@@ -294,80 +245,9 @@ void RibbonPaint::saveOutBrushImageAndParameters()
 	std::stringstream ss;
 	ss << now.date().month() <<  now.date().day() << "_";
 	std::string timeStamp = ss.str();
-
-	// Save the filename
-	//std::string fileName = getAssetPath("") / "RibbonPaint/Brush_";
-
-	// Lets write the file now
-	// Get an OStreamFileRef which is what you'll use to write to your file.
-	//ci::OStreamFileRef oStream = ci::writeFileStream( fileName + ".txt", true );
-
-	// Create a string with the data you want to write.
-//	std::string myString = "Ribbon Paint(c) by Mario Gonzalez (onedayitwillmake.com) of Whale Island Games\n-\n";
-//	myString += "Parameters Used: [" + toString(_bristleCount) + "," + toString(_brushRadius) + "," + toString(_filamentSpacing) + "," + toString(_filamentCount);
-//	myString += ",0." + toString(round(_canvasFrictionMin*100));
-//	myString += ",0." + toString(round(_canvasFrictionMax*100));
-//	myString += ",0." + toString(round(_gravity * 100));
-//	myString += "," + toString(_alphaWhenDrawing);
-//	myString += "," + toString(_mouseChaseDamping);
-//	myString +=+ "]";
-//	myString += "\n";
-//
-//	// Human output of params used
-//	myString += "\t BristleCount: " + toString(_bristleCount) + " \n";
-//	myString += "\t BrushRadius: " + toString(_brushRadius) + " \n";
-//	myString += "\t FilamentSpacing: " + toString(_filamentSpacing) + " \n";
-//	myString += "\t FilimentCount: " + toString(_filamentCount) + " \n";
-//	myString += "\t FrictionMin: 0." + toString(round(_canvasFrictionMin * 100)) + " \n";
-//	myString += "\t FrictionMax: 0." + toString(round(_canvasFrictionMax * 100)) + " \n";
-//	myString += "\t Gravity: 0." + toString(round(_gravity * 100)) + " \n";
-//	myString += "\t Painting Alpha: " + toString(_alphaWhenDrawing) + " \n";
-//	myString += "\t Mousechase Damping: " + toString(_mouseChaseDamping) + " \n";
-//
-//	// footer
-//	myString += "----\nRibbonPaint is released under Creative Commons Attribution 3.0 Unported License.";
-//	myString += "\nhttp://creativecommons.org/licenses/by/3.0/";
-//	myString += "\n\nRibbonPaint may be used in client/commercial work, but no license may be applied those works.";
-//	myString += "\nmariogonzalez@gmail.com";
-//	myString += "\n\nMade with http://libcinder.org c++ framework.";
-//
-//	std::cout << myString << std::endl;
-	// Now write the text to the file.
-//	oStream->writeData( myString.data(), myString.length() );
-
-
-	// Write the image now that the directory exist
-//	writeImage( fileName + ".png", copyWindowSurface() );
-
-//	displayAlertString("File saved to: " + fileName);
 }
 
 
-void RibbonPaint::fileDrop( ci::app::FileDropEvent event )
-{
-	if(_state != kStateNormal) return;
-
-	//if(event.getNumFiles() != 1) return;
-
-	//std::string fileRef = event.getFile(0);
-
-	//ci::IStreamFileRef stream = ci::loadFileStream(fileRef);
-
-	//while (stream->isEof() == false)
-	//{
-	//	std::string currentLine = stream->readLine();
-	//	std::string::size_type locationIndex = currentLine.find( "Parameters Used: [", 0 );
-
-	//	// Found a match lets set the parameters
-	//	if( locationIndex != std::string::npos )
-	//	{
-	//		setBrushSettingsFromStringParameters(currentLine);
-	//		return;
-	//	}
-	//}
-}
-
-#pragma mark Brush Creation
 void RibbonPaint::randomizeBrush()
 {
 	std::vector<std::string> randomParamsList;
@@ -451,8 +331,6 @@ void RibbonPaint::setBrushSettingsFromStringParameters( std::string currentLine 
 				break;
 		};
 	}
-
-	updateParams();
 	// Everythign went great - lets recreate recreate the brush
 	createBrush();
 }
@@ -486,16 +364,80 @@ void RibbonPaint::createBrush()
 	}
 }
 
-#pragma mark Update / Draw 
 void RibbonPaint::update()
 {
-	if(_state != kStateNormal) {
-		return;
+	while( receiver.hasWaitingMessages() ) {
+		osc::Message m;
+		receiver.getNextMessage( &m );
+
+		console() << "New message received" << std::endl;
+		console() << "Address: " << m.getAddress() << std::endl;
+		console() << "Num Arg: " << m.getNumArgs() << std::endl;
+		// check for mouse moved message
+		if(m.getAddress() == "/mouse/position"){
+			// both the arguments are int32's
+			Vec2i pos = Vec2i( m.getArgAsInt32(0), m.getArgAsInt32(1));
+			_mousePosition = pos;
+			if ( m.getArgAsInt32(2) == 1 )
+			{
+				mMouseDown = true;
+			}
+			else
+			{
+				mMouseDown = false;
+			}
+			if ( mMouseDown )
+			{
+				_oldAlphaWhenDrawing = _alphaWhenDrawing;
+
+				// Not drawing lines, clear the frame
+				if(_drawLines == false)
+					ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+
+				// start drawing lines
+				_drawLines = true;
+			}
+		}
+		// check for mouse button message
+		else if(m.getAddress() == "/mouse/button"){
+			_oldAlphaWhenDrawing = _alphaWhenDrawing;
+			if ( m.getArgAsInt32(2) == 1 )
+			{
+				mMouseDown = true;
+			}
+			else
+			{
+				mMouseDown = false;
+			}
+		}
+		else if(m.getAddress() == "/ribbon/randomizebrush"){
+			randomizeBrush();
+			/* TODO createBrush();
+			_glitchSegment = !_glitchSegment;
+			_useBezier = !_useBezier;*/
+		}
+		else if(m.getAddress() == "/window/position"){
+			// window position
+			setWindowPos(m.getArgAsInt32(0), m.getArgAsInt32(1));
+		}
+		else if(m.getAddress() == "/window/setfullscreen"){
+			// fullscreen
+			setFullScreen( ! isFullScreen() );
+		}		
+		else if(m.getAddress() == "/quit"){
+			quitProgram();
+		}		
+		else{
+			// unrecognized message
+			//cout << "not recognized:" << m.getAddress() << endl;
+
+		}
+
 	}
 
-	float nX = (_getWindowCenter().x) * 0.01f;
-	float nY = (_getWindowCenter().y) * 0.01f;
-	float nZ = _getElapsedFrames() * 0.003f;
+	float nX = (mRenderWidth/2) * 0.01f;
+	float nY = (mRenderHeight/2) * 0.01f;
+	float nZ = getElapsedFrames() * 0.003f;
 
 	float mNoise = _perlinNoise.noise( nX, nY, nZ );
 
@@ -508,7 +450,7 @@ void RibbonPaint::update()
 
 	if (doNoise)
 	{
-		float yRange = _getElapsedFrames() * 0.4;
+		float yRange = getElapsedFrames() * 0.4;
 		ci::Vec2f noiseVector( cosf( angle ) * 100 + (_mousePosition.x*0.1) , sinf( angle ) * yRange + (_mousePosition.y*0.1));
 		//		mousePosition =
 	} else {
@@ -541,12 +483,13 @@ void RibbonPaint::update()
 
 void RibbonPaint::draw()
 {
+	gl::clear( mBackgroundColor );
 	_alphaWhenDrawingFloat = _alphaWhenDrawing;
-	ci::gl::setMatricesWindow( ci::Vec2i(_getWindowWidth(), _getWindowHeight() ), true);
+	ci::gl::setMatricesWindow( ci::Vec2i(mRenderWidth, mRenderHeight ), true);
 
 	// Not drawing, clear screen
 	if( _drawLines == false ) {
-		ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+		//ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
 	} else { // overdraw to clear a little
 		//		ColorA stringColor = (_colorMode > COLORMODE_GRAYSCALE) ? ColorA(1.0, 1.0, 1.0, 1.0) : ColorA(0.0, 0.0, 0.0, 1.0);
 		//		glColor4f( stringColor.r, stringColor.g, stringColor.b, 0.01 );
@@ -630,43 +573,23 @@ void RibbonPaint::drawIKLine( linePointer& lineToDraw ) {
 }
 
 inline void RibbonPaint::drawBezier(ci::Vec2f origin, ci::Vec2f control, ci::Vec2f destination, const int segments) {
-	//ci::Vec2f vertices[segments + 1];
-	vector<ci::Vec2f> vertices;
-	float t = 0.0;
-	for(int i = 0; i <= segments-1; i++) {
-		float x = pow(1.0f - t, 2) * origin.x + 2.0f * (1.0f - t) * t * control.x + t * t * destination.x;
-		float y = pow(1.0f - t, 2) * origin.y + 2.0f * (1.0f - t) * t * control.y + t * t * destination.y;
-		vertices.push_back(ci::Vec2f(x, y));
-		//vertices[i] = ci::Vec2f(x, y);
-		t += 1.0f / segments;
-	}
-	vertices[segments] = destination;
 
-	/*glVertexPointer(2, GL_FLOAT, 0, vertices);
-	glDrawArrays(GL_LINE_STRIP, 0, segments + !_glitchSegment);*/
+	//vector<ci::Vec2f> vertices;
+	//float t = 0.0;
+	//for(int i = 0; i <= segments-1; i++) {
+	//	float x = pow(1.0f - t, 2) * origin.x + 2.0f * (1.0f - t) * t * control.x + t * t * destination.x;
+	//	float y = pow(1.0f - t, 2) * origin.y + 2.0f * (1.0f - t) * t * control.y + t * t * destination.y;
+	//	vertices.push_back(ci::Vec2f(x, y));
+	//	//vertices[i] = ci::Vec2f(x, y);
+	//	t += 1.0f / segments;
+	//}
+	//vertices[segments] = destination;
+
+
 }
 
-#ifdef __RIBBON__PAINT__XCODE__
-//	ci::Area RibbonPaint::_getWindowBounds() { return getWindowBounds(); }
-	ci::Vec2f RibbonPaint::_getWindowCenter() { return [[MyCinderGLDrawing instance] getWindowCenter]; }
-	int RibbonPaint::_getWindowWidth() { return [[MyCinderGLDrawing instance] getWindowWidth];  }
-	int RibbonPaint::_getWindowHeight() { return [[MyCinderGLDrawing instance] getWindowHeight]; }
-	int RibbonPaint::_getElapsedFrames() { return [[MyCinderGLDrawing instance] getElapsedFrames]; }
-	bool RibbonPaint::_getIsShiftDown() { return [MyCinderGLDrawing instance]->mKeyShiftDown; }
-#else
-	ci::Area RibbonPaint::_getWindowBounds() { return getWindowBounds(); }
-	ci::Vec2f RibbonPaint::_getWindowCenter() { return getWindowCenter(); }
-	int RibbonPaint::_getWindowWidth() { return getWindowWidth(); }
-	int RibbonPaint::_getWindowHeight() { return getWindowHeight(); }
-	int RibbonPaint::_getElapsedFrames() { return getElapsedFrames(); }
-	bool RibbonPaint::_getIsShiftDown() { return false; }
 
-	// Mouse wrappers
-	void RibbonPaint::mouseDown( ci::app::MouseEvent event ) { mouseDown( event.getPos() ); }
-	void RibbonPaint::mouseMove( ci::app::MouseEvent event ) { mouseMove( event.getPos() ); }
-	void RibbonPaint::mouseDrag( ci::app::MouseEvent event ) { mouseDrag( event.getPos() ); }
-	void RibbonPaint::mouseUp( ci::app::MouseEvent event ) { mouseUp( event.getPos() ); }
 
 	CINDER_APP_BASIC( RibbonPaint, ci::app::RendererGl )
-#endif
+
 

@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "cinder/app/AppBasic.h"
 #include "cinder/app/KeyEvent.h"
@@ -39,7 +39,9 @@
 #include <boost/smart_ptr.hpp>
 // Absolute imports
 #include <vector>
-
+// hwnd
+#include "dwmapi.h"
+#include "OscListener.h"
 
 enum
 {
@@ -54,11 +56,6 @@ enum
 	COLORMODE_ALPHABLEND_3 = 9,
 };
 
-enum
-{
-	kStateIsShowingSplashScreen,
-	kStateNormal
-};
 
 //using namespace std;
 //using namespace ci::app;
@@ -73,7 +70,6 @@ public:
 	// Cinder events
 	void prepareSettings( ci::app::AppBasic::Settings *settings);
 	void setup();
-	void setupAfterSplash();
 	void update();
 	
 	// UIEvents
@@ -84,14 +80,6 @@ public:
 	void mouseDrag( ci::Vec2f position );
 	void mouseMove( ci::Vec2f position );
 
-#ifndef __RIBBON__PAINT__XCODE__
-	void mouseUp( ci::app::MouseEvent event );
-	void mouseDown( ci::app::MouseEvent event );
-	void mouseDrag( ci::app::MouseEvent event );
-	void mouseMove( ci::app::MouseEvent event );
-#endif
-
-	void fileDrop( ci::app::FileDropEvent event );
 	// Files
 	void saveOutBrushImageAndParameters();
 	// Creation / Deletion
@@ -104,16 +92,7 @@ public:
 	void drawBezier(ci::Vec2f origin, ci::Vec2f control, ci::Vec2f destination, int segments);
 	// Utils
 	template <class T> inline std::string toString(const T& t);
-	void updateParams();
 	void displayAlertString(std::string textToDisplay);
-	
-
-	ci::Area _getWindowBounds();
-	ci::Vec2f _getWindowCenter();
-	int _getWindowWidth();
-	int _getWindowHeight();
-	int _getElapsedFrames();
-	bool _getIsShiftDown();
 	
 	ci::Vec2f						_mousePosition;
 	ci::Perlin						_perlinNoise;
@@ -123,9 +102,7 @@ public:
 	ColorModes::ColorStateManager _colorStateManager;
 	std::map<char, ColorModes::IColorMode*> _colorMap;
 
-	int		_state;
 	bool	_drawLines;
-	bool	_drawParams;
 	bool	_useBezier;
 	bool	_additiveBlending; // Affected by _colorMode but not settable.
 	bool	_glitchSegment;
@@ -151,17 +128,19 @@ public:
 	float	_canvasFrictionMax;
 //	int		_colorMode;
 
-	// Version checking
-	float				_versionNumber;
-	float				_latestVersion;
-	int					_versionFlasher;
-	ci::IStreamUrlRef	_versionCheckUrlRef;
-	
-//#define __COLORMODE__TEST
-#ifdef __COLORMODE__TEST
-	float __R_LEFT, __R_RIGHT;
-	float __G_LEFT, __G_RIGHT;
-	float __B_LEFT, __B_RIGHT;
-	float __RGB_ALPHA;
-#endif
+	// Reymenta
+	void				reymentaSetup();
+	void				quitProgram();
+	ColorAf				mBackgroundColor;
+	ColorAf				mColor;
+	int					mDisplayCount;
+	int					mMainDisplayWidth;
+	int					mRenderX;
+	int					mRenderY;
+	int					mRenderWidth;
+	int					mRenderHeight;
+	osc::Listener 		receiver;
+	Vec2i				mMousePos;
+	bool				mMouseDown;
+
 };

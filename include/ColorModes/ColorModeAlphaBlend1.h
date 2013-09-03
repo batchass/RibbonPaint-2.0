@@ -4,7 +4,7 @@
  *  Created on: Sep 30, 2011
  *      Author: mariogonzalez
  */
-
+#pragma once
 #ifndef COLORMODEALPHABLEND1_H_H
 #define COLORMODEALPHABLEND1_H_H
 
