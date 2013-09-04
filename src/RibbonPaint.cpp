@@ -46,7 +46,7 @@ void RibbonPaint::reymentaSetup()
 	{
 		mRenderX = mMainDisplayWidth;
 	}
-	/*setWindowSize( mRenderWidth, mRenderHeight );
+	setWindowSize( mRenderWidth, mRenderHeight );
 	
 	WindowRef rWin = app::getWindow();
 	rWin->setPos(mRenderX, mRenderY);
@@ -77,7 +77,7 @@ void RibbonPaint::reymentaSetup()
 		hr = DwmExtendFrameIntoClientArea(hWnd,&margins);
 	}
 	
-	setWindowPos( mMainDisplayWidth, 0 );*/
+	//setWindowPos( mMainDisplayWidth, 0 );
 	//setFullScreen( ! isFullScreen() );
 	receiver.setup( 10001 );
 }
@@ -133,15 +133,15 @@ void RibbonPaint::setup()
 void RibbonPaint::mouseDown( ci::Vec2f position ){
 
 	_oldAlphaWhenDrawing = _alphaWhenDrawing;
-	ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+	//ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
 }
 
 void RibbonPaint::mouseDrag( ci::Vec2f position )
 {
 
 	// Not drawing lines, clear the frame
-	if(_drawLines == false)
-		ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+	/*if(_drawLines == false)
+		ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );*/
 
 	_alphaWhenDrawing = _oldAlphaWhenDrawing;
 
@@ -161,7 +161,7 @@ void RibbonPaint::mouseUp( ci::Vec2f position ) {
 	_alphaWhenDrawing = ci::math<double>::max(_oldAlphaWhenDrawing, _alphaWhenDrawing);
 	_oldAlphaWhenDrawing = _alphaWhenDrawing;
 
-	ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+	//ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
 	_drawLines = false;
 }
 
@@ -229,7 +229,7 @@ void RibbonPaint::keyDown( ci::app::KeyEvent event )
 
 	// exit fullscreen with escape, and toggle with F
 	if ( event.getChar() == 'f' || (isFullScreen() && event.getCode() == ci::app::KeyEvent::KEY_ESCAPE) ) {
-		ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+		//ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
 		setFullScreen( !isFullScreen() );
 	}
 }
@@ -391,8 +391,8 @@ void RibbonPaint::update()
 				_oldAlphaWhenDrawing = _alphaWhenDrawing;
 
 				// Not drawing lines, clear the frame
-				if(_drawLines == false)
-					ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );
+				/*if(_drawLines == false)
+					ci::gl::clear( _colorStateManager.getColorModel()->getBackgroundColor() );*/
 
 				// start drawing lines
 				_drawLines = true;
@@ -483,7 +483,7 @@ void RibbonPaint::update()
 
 void RibbonPaint::draw()
 {
-	gl::clear( mBackgroundColor );
+	//gl::clear( mBackgroundColor );
 	_alphaWhenDrawingFloat = _alphaWhenDrawing;
 	ci::gl::setMatricesWindow( ci::Vec2i(mRenderWidth, mRenderHeight ), true);
 
