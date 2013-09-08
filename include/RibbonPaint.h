@@ -57,7 +57,7 @@ enum
 };
 
 
-//using namespace std;
+using namespace std;
 //using namespace ci::app;
 //using namespace boost::posix_time;
 

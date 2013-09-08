@@ -112,8 +112,7 @@ void RibbonPaint::setup()
 	_alphaWhenDrawing = 0.11;
 	_mouseChaseDamping = 0.2;
 
-	_colorStateManager.setInitialState( new ColorModes::ColorModeRGB() );
-
+	_colorStateManager.setInitialState( new ColorModes::ColorModeHSV() );
 	_colorMap['1'] = new ColorModes::ColorModeHSV();
 	_colorMap['2'] = new ColorModes::ColorModeRGB();
 	_colorMap['3'] = new ColorModes::ColorModeRGBInverse();
@@ -126,6 +125,8 @@ void RibbonPaint::setup()
 	_additiveBlending = false;
 	_useBezier = false;
 	randomizeBrush();
+	gl::clear( mBackgroundColor );
+
 }
 
 #pragma mark Events
@@ -415,6 +416,44 @@ void RibbonPaint::update()
 			/* TODO createBrush();
 			_glitchSegment = !_glitchSegment;
 			_useBezier = !_useBezier;*/
+		}		
+		else if(m.getAddress() == "/ribbon/colors"){
+			switch (m.getArgAsInt32(0))
+			{
+			case 2:
+				_colorStateManager.changeState(_colorMap['2']);
+				break;
+			case 3:
+				_colorStateManager.changeState(_colorMap['3']);
+				break;
+			case 4:
+				_colorStateManager.changeState(_colorMap['4']);
+				break;
+			case 5:
+				_colorStateManager.changeState(_colorMap['5']);
+				break;
+			case 6:
+				_colorStateManager.changeState(_colorMap['6']);
+				break;
+			case 7:
+				_colorStateManager.changeState(_colorMap['7']);
+				break;
+			case 8:
+				_colorStateManager.changeState(_colorMap['8']);
+				break;
+			default:
+				_colorStateManager.changeState(_colorMap['1']);
+				break;
+			}
+			gl::clear( mBackgroundColor );
+
+			/*stringstream colorTheme; 
+			colorTheme << m.getArgAsInt32(0);
+			_colorStateManager.changeState(_colorMap[colorTheme.str()]);
+			std::map<char, ColorModes::IColorMode*>::iterator itr = _colorMap.find( colorTheme.str() );
+			if(itr != _colorMap.end() ) {
+				_colorStateManager.changeState( itr->second );
+			}*/
 		}
 		else if(m.getAddress() == "/window/position"){
 			// window position
@@ -422,7 +461,7 @@ void RibbonPaint::update()
 		}
 		else if(m.getAddress() == "/window/setfullscreen"){
 			// fullscreen
-			setFullScreen( ! isFullScreen() );
+			//setFullScreen( ! isFullScreen() );
 		}		
 		else if(m.getAddress() == "/quit"){
 			quitProgram();
@@ -483,7 +522,7 @@ void RibbonPaint::update()
 
 void RibbonPaint::draw()
 {
-	//gl::clear( mBackgroundColor );
+	// gl::clear( mBackgroundColor );
 	_alphaWhenDrawingFloat = _alphaWhenDrawing;
 	ci::gl::setMatricesWindow( ci::Vec2i(mRenderWidth, mRenderHeight ), true);
 
